@@ -3,7 +3,7 @@ import psycopg2
 
 try:
     # пытаемся подключиться к базе данных
-    conn = psycopg2.connect(dbname='bio', user='postgres', password='123', host='127.0.0.1')
+    conn = psycopg2.connect(dbname='bio', user='postgres', password='toor', host='127.0.0.1')
     cursor = conn.cursor()
 except:
     # в случае сбоя подключения будет выведено сообщение в STDOUT
@@ -20,5 +20,4 @@ conn.commit()
 
 
 cursor.close()
-conn.close() # закрываем соединение
-
+conn.close()  # закрываем соединение
