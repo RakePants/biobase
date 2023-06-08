@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>БАДы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="icons/favicon32.ico">
+</head>
+<body>
+  <header>
+    <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()">
+  </header>
+  <section class="main">
+    <div class="add">
+      <div class="title">Добавить БАД</div>
+      <form id="addForm">
+        <input type="text" required id="nameInput" placeholder="Название">
+        <input type="image" id="addBtn" alt="Login"
+       src="img/add.png">
+      </form>
+    </div>
+    <table id="data">
+      <tr>
+        <th>Имя и действия</th>
+      </tr>
+      <!-- Здесь будут отображаться данные из базы данных -->
+    </table>
+  </section>
+  <div class="overlay" id="overlay">
+      
+  </div>
+  <div class="mdal" id="change">
+    <div class="mdal__close">&times;</div>
+    <div class="mdal__subtitle">Введите новое название препарата</div>
+    <div class="mdal__line"></div>
+    <form class="mdal__form" action="#">
+      <input name="name" required placeholder="Название" type="text" class="mdal__form__name">
+      <input type="submit" value="OK" class="mdal__form__submit">
+    </form>
+  </div>
+
+  <script>
+// Функция поиска
+function search() {
+  var searchInput = document.getElementById("search");
+  // Значение для поиска
+  var filter = searchInput.value;
+  // Таблица
+  var table = document.getElementById("data");
+  // Колонки таблицы
+  var rows = table.getElementsByTagName("tr");
+
+  // Fetch запрос к API
+  fetch('/search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ request: filter }) 
+  })
+  .then(response => response.json())
+  .then(data => {
+  while (table.rows.length > 1) {
+    table.deleteRow(1);
+  }
+
+  data.text.forEach(rowData => { // Исправлено: обращаемся к свойству 'text' объекта 'data'
+    var row = table.insertRow(-1);
+
+    rowData.forEach(cellData => {
+      var cell = row.insertCell();
+      cell.textContent = cellData;
+    });
+  });
+})
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+
+    // Функция для добавления новых данных в таблицу
+    function addData() {
+    var nameInput = document.getElementById("nameInput");
+
+    var table = document.getElementById("data");
+    var row = table.insertRow(-1);
+
+    var nameCell = row.insertCell(0);
+    nameCell.classList.add("data-cell");
+
+    var name = document.createElement("span");
+    name.textContent = nameInput.value;
+
+    var actions = document.createElement("div");
+    actions.classList.add("data-actions");
+
+    var checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.style.width = "35px";
+    checkbox.style.height = "35px";
+    var editButton = document.createElement("img");
+    editButton.src = "img/compose.png";
+    editButton.alt = "Моя кнопка";
+    editButton.style.cursor = "pointer";
+    editButton.style.width = "35px";
+    editButton.style.height = "35px";
+
+    editButton.addEventListener("click", function () {
+      editData(this);
+    });
+
+    actions.appendChild(checkbox);
+    actions.appendChild(editButton);
+
+    nameCell.appendChild(name);
+    nameCell.appendChild(actions);
+
+    // Добавление строки и ячейки в таблицу
+    row.appendChild(nameCell);
+
+    // Очистка полей ввода
+    nameInput.value = "";
+  }
+
+    // Получение элементов модального окна и крестика
+    var modal = document.getElementById("change");
+    var closeButton = modal.querySelector(".mdal__close");
+    var overlay = document.getElementById("overlay");
+    // Функция для редактирования данных
+    function editData(button) {
+      var row = button.parentNode.parentNode;
+      var nameCell = row.cells[0];
+      var name = nameCell.querySelector("span").textContent;
+
+  
+      var nameInput = modal.querySelector(".mdal__form__name");
+      var form = modal.querySelector(".mdal__form");
+
+      // Заполнение полей модального окна текущими данными
+      nameInput.value = name;
+
+      // Отображение модального окна
+      overlay.classList.add("active");
+      modal.classList.add("active");
+
+
+      // Обработчик отправки формы модального окна
+      form.addEventListener("submit", function(e) {
+        e.preventDefault(); // Предотвращаем отправку формы и перезагрузку страницы
+
+        // Получение нового названия препарата
+        var newName = nameInput.value;
+
+        // Обновление названия в таблице
+        nameCell.querySelector("span").textContent = newName;
+
+        // Закрытие модального окна
+        closeModal();
+      });
+    }
+
+    
+
+    // Функция для закрытия модального окна
+    function closeModal() {
+      modal.classList.remove("active");
+      overlay.classList.remove("active");
+    }
+
+    // Обработчик клика на крестик
+    closeButton.addEventListener("click", function() {
+      closeModal();
+    });
+
+    // Обработчик клика на затемненный фон
+    overlay.addEventListener("click", function() {
+      closeModal();
+    });
+
+    // Обработчик клика внутри модального окна, чтобы предотвратить закрытие при клике внутри него
+    modal.addEventListener("click", function(event) {
+      event.stopPropagation();
+    });
+
+
+    // Обработчик отправки формы
+    var addForm = document.getElementById("addForm");
+    addForm.addEventListener("submit", function(e) {
+      e.preventDefault(); // Предотвращаем отправку формы и перезагрузку страницы
+      addData();
+    });
+  </script>
+</body>
+</html>
