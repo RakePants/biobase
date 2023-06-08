@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: YandexSpeller
+Version: 1.0.0
+Summary: Yandex Speller API
+Home-page: UNKNOWN
+Author: Vadim Simakin
+Author-email: sima.vad@yandex.ru
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+Requires-Dist: requests
+
+
+Yandex Speller API. How to use:
+```
+>>> from yaspeller import check
+>>> res = check('привет', lang='ru')
+>>> res.is_ok
+True
+>>> res.first_match()
+None
+```
+
+
