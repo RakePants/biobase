@@ -33,15 +33,21 @@ async def search(data = Body()):
     print(all_names)
     return JSONResponse({"text": all_names})
 
+@app.get("/update")
+def update(data = Body()):
+
+    name = data["name"]
+    print(name)
+    new_name = data["new_name"]
+    cursor.execute(f"UPDATE names SET name = '{new_name}' WHERE name = '{name}'")
+    conn.commit()
+
 
 app.mount("/", StaticFiles(directory="static",html=True),name = "static")
 
 
 
-# def update():
-#
-#     cursor.execute("UPDATE names SET name = 'Сашокчек' WHERE card_id = 'f01abdfe-6980-4b3c-a5c1-416acf1b06bc'")
-#     conn.commit()
+
 
 
 
