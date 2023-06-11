@@ -1,3 +1,8 @@
-psycopg2
-fastapi[all]
-starlette
+alembic~=1.11.1
+asyncpg
+fastapi[all]~=0.96.1
+python-dotenv~=1.0.0
+sqlalchemy~=2.0.16
+pyaspeller
+uvicorn~=0.22.0
+pydantic~=1.10.9
