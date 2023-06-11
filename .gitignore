@@ -89,6 +89,7 @@ fabric.properties
 [Ss]cripts
 pyvenv.cfg
 .venv
+.idea/
 pip-selfcheck.json
 
 ### Python template
