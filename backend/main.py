@@ -11,7 +11,7 @@ speller = YandexSpeller()
 
 try:
     # пытаемся подключиться к базе данных
-    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres3', host='localhost', port='5432')
+    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres', host='localhost', port='5432')
     cursor = conn.cursor()
 except:
     # в случае сбоя подключения будет выведено сообщение в STDOUT
