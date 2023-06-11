@@ -11,7 +11,7 @@ speller = YandexSpeller()
 
 try:
     # пытаемся подключиться к базе данных
-    conn = psycopg2.connect(dbname='bio', user='postgres', password='123', host='127.0.0.1')
+    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres3', host='localhost', port='5432')
     cursor = conn.cursor()
 except:
     # в случае сбоя подключения будет выведено сообщение в STDOUT
@@ -43,4 +43,7 @@ def update(data = Body()):
     conn.commit()
 
 
-app.mount("/", StaticFiles(directory="static",html=True),name = "static")
+# app.mount("/", StaticFiles(directory="static",html=True),name = "static") - не работает, надо исправить
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="localhost", port=8000)
