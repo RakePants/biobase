@@ -200,15 +200,7 @@ check.addEventListener('change', function() {
 function del(){
   var del = document.getElementById("delete");
   del.classList.add("delete_active");
-  // var cells = document.querySelectorAll('td');
-  // for(let cell of cells){
-  //   var check  = cells.querySelector('deleteRow');
-  //   if(check.checked){
-  //     var row = cell.parentNode;
-  //     row.parentNode.removeChild(row);
-  //   }
-    
-  // }
+ 
 
 }
 
