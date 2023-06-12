@@ -43,7 +43,7 @@ def update(data = Body()):
     conn.commit()
 
 
-# app.mount("/", StaticFiles(directory="static",html=True),name = "static") - не работает, надо исправить
+app.mount("/", StaticFiles(directory="../frontend/static",html=True),name = "static")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="localhost", port=7000)
