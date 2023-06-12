@@ -93,6 +93,11 @@ header
 			font-size: 28px
 			line-height: 44px
 			color: #000000
+		.deleteRow
+			float: right
+			width: 35px
+			height: 35px
+			margin-right: 28px
 		.editRow
 			float: right
 			cursor: pointer
@@ -165,6 +170,7 @@ header
 			border-radius: 32px
 			padding-left: 20px
 		&__submit
+			cursor: pointer
 			display: block
 			margin: 0 auto
 			margin-top: 64px
@@ -180,9 +186,10 @@ header
 .active
 	display: block
 .delete
+	padding: 41px 55px 0px 55px
 	position: fixed
 	width: 623px
-	height: 275px
+	height: 230px
 	top: -100%
 	left: 50%
 	transform: translateX(-50%)
@@ -192,3 +199,15 @@ header
 	border-radius: 0px 0px 60px 60px
 	&_active
 		top: 0px
+	&_desc
+		font-weight: 700
+		font-size: 32px
+		line-height: 39px
+		text-align: center
+		color: #000000
+	&_actions
+		margin-top: 24px
+		display: flex
+		justify-content: space-around
+		img
+			cursor: pointer

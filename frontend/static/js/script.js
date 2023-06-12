@@ -7,9 +7,11 @@ const form = document.querySelector('.mdal__form');
 const nameInput = document.querySelector('.mdal__form__name');
 const addButton = document.getElementById('addBtn');
 const dataTable = document.getElementById('data');
-const newDataInput = document.getElementById('nameInput')
+const newDataInput = document.getElementById('nameInput');
+const closDel = document.getElementById('delete_close');
+const remDel = document.getElementById('delete_remove');
 let editedRow; // Переменная для хранения ссылки на редактируемую строку
-
+let toDel = 0;
 
 
 // Функция поиска
@@ -82,20 +84,27 @@ function search() {
         const cell = document.createElement('td');
         const div = document.createElement('div');
         const button = document.createElement('img');
+        const check = document.createElement('input');
+        check.type = 'checkbox';  
         button.src = "img/compose.png";
 
         const newName = cellData; // Получаем новое значение из поля ввода
         nnnn = cellData;
         div.textContent = newName;
+        check.classList.add('deleteRow');
         button.classList.add('editRow');
+
 
         cell.appendChild(div);
         cell.appendChild(button);
-        newRow.appendChild(cell);
+        cell.appendChild(check);
         table.querySelector('tbody').appendChild(newRow);
 
         // Назначаем обработчики событий для кнопок редактирования
         button.addEventListener('click', openModal);
+        check.addEventListener('change', function() {
+          del();
+        });
     });
   });
 })
@@ -130,6 +139,15 @@ function handleSubmit(event) {
   // Обновляем значение в соответствующей ячейке таблицы
   const cell = editedRow.querySelector('div');
   cell.textContent = newName;
+
+  // fetch('/update', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify({ id: rowData.id, name: newName })
+  // })
+  
   // Закрываем модальное окно
   closeModal();
 }
@@ -141,21 +159,62 @@ const newRow = document.createElement('tr');
 const cell = document.createElement('td');
 const div = document.createElement('div');
 const button = document.createElement('img');
+const check = document.createElement('input');
+check.type = 'checkbox';
 button.src = "img/compose.png";
 
 const newName = newDataInput.value; // Получаем новое значение из поля ввода
 
 div.textContent = newName;
 button.textContent = 'OK';
+check.classList.add('deleteRow');
 button.classList.add('editRow');
+
 
 cell.appendChild(div);
 cell.appendChild(button);
+cell.appendChild(check);
+
+
 newRow.appendChild(cell);
 dataTable.querySelector('tbody').appendChild(newRow);
-
+newDataInput.value = "";
 // Назначаем обработчики событий для кнопок редактирования
 button.addEventListener('click', openModal);
+check.addEventListener('change', function() {
+  if(check.checked){
+    toDel = toDel + 1;
+    if(toDel == 1) {
+      del();
+    }
+  }
+  else{
+    toDel = toDel - 1;
+    if(toDel == 0){
+      closeDel();
+    }
+  }
+});
+}
+
+function del(){
+  var del = document.getElementById("delete");
+  del.classList.add("delete_active");
+  // var cells = document.querySelectorAll('td');
+  // for(let cell of cells){
+  //   var check  = cells.querySelector('deleteRow');
+  //   if(check.checked){
+  //     var row = cell.parentNode;
+  //     row.parentNode.removeChild(row);
+  //   }
+    
+  // }
+
+}
+
+function closeDel() {
+  var del = document.getElementById("delete");
+  del.classList.remove("delete_active");
 }
 
 
@@ -177,3 +236,29 @@ addButton.addEventListener('click', function(event) {
   event.preventDefault(); // Предотвращает обновление страницы при отправке формы
   addRow();
 });
+
+remDel.addEventListener('click', function(){
+  var cells = document.querySelectorAll('td');
+  for(let cell of cells){
+    var check = cell.querySelector('.deleteRow');
+    if(check.checked){
+      var row = cell.parentNode;
+      row.parentNode.removeChild(row);
+    }
+  }
+  toDel = 0;
+  closeDel();
+  
+})
+
+closDel.addEventListener('click', function(){
+  var cells = document.querySelectorAll('td');
+  for(let cell of cells){
+    var check = cell.querySelector('.deleteRow');
+    if(check.checked){
+      check.checked = false;    
+    }
+  }
+  toDel = 0;
+  closeDel();
+})

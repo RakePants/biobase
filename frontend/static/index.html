@@ -25,9 +25,8 @@
     </div>
     <table id="data">
       <tbody>
-        
+          <!-- Здесь будут отображаться данные из базы данных -->
       </tbody>
-      <!-- Здесь будут отображаться данные из базы данных -->
     </table>
   </section>
   <div class="overlay" id="overlay"></div>
@@ -40,235 +39,17 @@
       <input type="submit" value="OK" class="mdal__form__submit">
     </form>
   </div>
-  <div id="delete" class="delete"></div>
+  <div id="delete" class="delete">
+    <div class="delete_desc">
+      Удалить выбранные элементы?
+    </div>
+    <div class="delete_actions">
+      <img src="img/close.png" alt="close" id="delete_close">
+      <img src="img/bin.png" alt="bin" id="delete_remove">
+    </div>
+  </div>
 
-  <!-- <script>
-    // Функция поиска
-    function search() {
-      var searchInput = document.getElementById("search");
-      // Значение для поиска
-      var filter = searchInput.value;
-      // Таблица
-      var table = document.getElementById("data");
-      // Колонки таблицы
-      var rows = table.getElementsByTagName("tr");
-
-      // Fetch запрос к API
-      fetch('/search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ request: filter })
-      })
-        .then(response => response.json())
-        .then(data => {
-          while (table.rows.length > 1) {
-            table.deleteRow(1);
-          }
-
-          data.text.forEach((rowData, index) => {
-            rowData.rowIndex = index + 1;
-
-            var row = table.insertRow(-1);
-
-            var nameCell = row.insertCell();
-            nameCell.textContent = rowData.name;
-
-            var editCell = row.insertCell();
-            var editButton = document.createElement('button');
-            editButton.textContent = 'Редактировать';
-            editButton.addEventListener('click', function() {
-              editRecord(rowData);
-            });
-            editCell.appendChild(editButton);
-
-            var checkboxCell = row.insertCell();
-            var checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkboxCell.appendChild(checkbox);
-          });
-        })
-        .catch(error => {
-          console.error('Error:', error);
-        });
-    }
-    function editRecord(rowData) {
-  // Проверяем, если запись уже находится в режиме редактирования, то выходим из функции
-  if (rowData.editMode) {
-    return;
-  }
-
-  // Устанавливаем флаг режима редактирования
-  rowData.editMode = true;
-
-  // Открываем модальное окно
-  var modal = document.getElementById("change");
-  modal.style.display = "block";
-
-  // Получаем элементы модального окна
-  var nameInput = document.querySelector("#change .mdal__form__name");
-  var submitButton = document.querySelector("#change .mdal__form__submit");
-
-  // Заполняем поле ввода текущим значением
-  nameInput.value = rowData.name;
-
-  // Обработчик события отправки формы модального окна
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    // Получаем новое значение из поля ввода
-    var newName = nameInput.value;
-
-    // Отправляем fetch запрос для сохранения изменений
-    fetch('/update', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ id: rowData.id, name: newName })
-    })
-    .then(response => response.json())
-    .then(data => {
-      // Закрываем модальное окно
-      modal.style.display = "none";
-
-      // Обновляем значение в таблице
-      rowData.name = newName;
-      var row = document.getElementById("data").rows[rowData.rowIndex];
-      var nameCell = row.cells[0];
-      nameCell.textContent = newName;
-
-      rowData.editMode = false;
-    })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  }
-
-  // Назначаем обработчик события отправки формы
-  submitButton.addEventListener("click", handleSubmit);
-}
-
-
-
-   // Функция для добавления новых данных в таблицу
-function addData() {
-  var nameInput = document.getElementById("nameInput");
-
-  var table = document.getElementById("data");
-  var row = table.insertRow(-1);
-
-  var nameCell = row.insertCell(0);
-  nameCell.classList.add("data-cell");
-
-  var name = document.createElement("span");
-  name.textContent = nameInput.value;
-
-  var actions = document.createElement("div");
-  actions.classList.add("data-actions");
-
-  var checkbox = document.createElement("input");
-  checkbox.type = "checkbox";
-  checkbox.style.width = "35px";
-  checkbox.style.height = "35px";
-  var editButton = document.createElement("img");
-  editButton.src = "img/compose.png";
-  editButton.alt = "Моя кнопка";
-  editButton.style.cursor = "pointer";
-  editButton.style.width = "35px";
-  editButton.style.height = "35px";
-
-  actions.appendChild(checkbox);
-  actions.appendChild(editButton);
-
-  nameCell.appendChild(name);
-  nameCell.appendChild(actions);
-
-  // Добавление строки и ячейки в таблицу
-  row.appendChild(nameCell);
-
-  // Очистка полей ввода
-  nameInput.value = "";
-}
-
-// Получение элементов модального окна и крестика
-var modal = document.getElementById("change");
-var closeButton = modal.querySelector(".mdal__close");
-var overlay = document.getElementById("overlay");
-
-// Обработчик клика на кнопку редактирования
-document.getElementById("data").addEventListener("click", function (event) {
-  if (event.target && event.target.nodeName === "IMG") {
-    var row = event.target.closest("tr");
-    editData(row);
-  }
-});
-
-// Функция для редактирования данных
-function editData(row) {
-  var nameCell = row.querySelector(".data-cell");
-
-  // Проверка, существует ли nameCell
-  if (nameCell) {
-    var name = nameCell.querySelector("span").textContent;
-
-    var nameInput = modal.querySelector(".mdal__form__name");
-    var form = modal.querySelector(".mdal__form");
-
-    // Отображение модального окна
-    overlay.classList.add("active");
-    modal.classList.add("active");
-
-    // Получение нового названия препарата
-    nameInput.value = name;
-
-    // Обработчик отправки формы модального окна
-    form.addEventListener("submit", function (e) {
-      e.preventDefault(); // Предотвращаем отправку формы и перезагрузку страницы
-
-      // Получение нового названия препарата
-      var newName = nameInput.value;
-
-      // Обновление названия в таблице
-      if (row.querySelector(".data-cell span")) {
-        row.querySelector(".data-cell span").textContent = newName;
-      }
-
-      // Закрытие модального окна
-      closeModal();
-    });
-  }
-}
-
-// Функция для закрытия модального окна
-function closeModal() {
-  modal.classList.remove("active");
-  overlay.classList.remove("active");
-}
-
-// Обработчик клика на крестик
-closeButton.addEventListener("click", function () {
-  closeModal();
-});
-
-// Обработчик клика на затемненный фон
-overlay.addEventListener("click", function () {
-  closeModal();
-});
-
-// Обработчик клика внутри модального окна, чтобы предотвратить закрытие при клике внутри него
-modal.addEventListener("click", function (event) {
-  event.stopPropagation();
-});
-
-// Обработчик отправки формы
-var addForm = document.getElementById("addForm");
-addForm.addEventListener("submit", function (e) {
-  e.preventDefault(); // Предотвращаем отправку формы и перезагрузку страницы
-  addData();
-});
-  </script> -->
+  
 <script src="js/script.js"></script>
   
 </body>
