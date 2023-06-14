@@ -11,7 +11,7 @@ speller = YandexSpeller()
 
 try:
     # пытаемся подключиться к базе данных
-    conn = psycopg2.connect(dbname='bio', user='postgres', password='123', host='localhost', port='5432')
+    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres', host='localhost', port='5432')
     cursor = conn.cursor()
 except:
     # в случае сбоя подключения будет выведено сообщение в STDOUT
@@ -26,7 +26,7 @@ async def search(data = Body()):
     request = data['request']
     fixed = speller.spelled(request)
     print(fixed)
-    cursor.execute(f"select name from names where lower(name) like lower('%{fixed}%')")
+    cursor.execute(f"select name from names where lower(name) like lower('%{fixed}%') ORDER BY names.name")
     all_names = cursor.fetchall()
     print(all_names)
     return JSONResponse({"text": all_names})
@@ -53,7 +53,7 @@ def add(data = Body()):
     conn.commit()
 
 
-app.mount("/", StaticFiles(directory="../frontend/static",html=True),name = "static")
+# app.mount("/", StaticFiles(directory="../frontend/static",html=True),name = "static")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=8000)
+    uvicorn.run(app, host="localhost", port=7000)
