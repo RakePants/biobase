@@ -42,8 +42,8 @@ def update(data = Body()):
 @app.post("/delete")
 def update(data = Body()):
     names = data["name"]
-    for i in range(len(names)):
-        cursor.execute(f"DELETE FROM names WHERE name = '{names[i]}'")
+    for name in names:
+        cursor.execute(f"DELETE FROM names WHERE name = '{name}'")
     conn.commit()
 
 @app.post("/add")
