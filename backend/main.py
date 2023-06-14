@@ -11,7 +11,7 @@ speller = YandexSpeller()
 
 try:
     # пытаемся подключиться к базе данных
-    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres', host='localhost', port='5432')
+    conn = psycopg2.connect(dbname='bio', user='postgres', password='123', host='localhost', port='5432')
     cursor = conn.cursor()
 except:
     # в случае сбоя подключения будет выведено сообщение в STDOUT
@@ -23,9 +23,7 @@ app = FastAPI()
 @app.post("/search")
 async def search(data = Body()):
 
-    print(data)
     request = data['request']
-    print(request)
     fixed = speller.spelled(request)
     print(fixed)
     cursor.execute(f"select name from names where lower(name) like lower('%{fixed}%')")
@@ -33,17 +31,29 @@ async def search(data = Body()):
     print(all_names)
     return JSONResponse({"text": all_names})
 
-@app.get("/update")
+@app.post("/update")
 def update(data = Body()):
 
     name = data["name"]
-    print(name)
     new_name = data["new_name"]
     cursor.execute(f"UPDATE names SET name = '{new_name}' WHERE name = '{name}'")
+    conn.commit()
+
+@app.post("/delete")
+def update(data = Body()):
+    names = data["name"]
+    for i in range(len(names)):
+        cursor.execute(f"DELETE FROM names WHERE name = '{names[i]}'")
+    conn.commit()
+
+@app.post("/add")
+def add(data = Body()):
+    name = data["name"]
+    cursor.execute(f"INSERT INTO names (name) VALUES ('{name}')")
     conn.commit()
 
 
 app.mount("/", StaticFiles(directory="../frontend/static",html=True),name = "static")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=7000)
+    uvicorn.run(app, host="localhost", port=8000)
