@@ -10,7 +10,7 @@ app = FastAPI(
 
 app.include_router(router_operation)
 
-app.mount("/", StaticFiles(directory="C:/Users/Шайтан коробка/Desktop/biobase/frontend/static", html=True), name="static")
+app.mount("/", StaticFiles(directory="C:/Users/emely/OneDrive/Desktop/Проектная практика/biobase/frontend/static", html=True), name="static")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
