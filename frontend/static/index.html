@@ -8,11 +8,12 @@
   <link rel="icon" href="icons/favicon32.ico">
 </head>
 <body>
-  <header>
-    <img src="img/logo.png" alt="Биогеном">
-    <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()">
-  </header>
+  
   <section class="main">
+    <header>
+      <img src="img/logo.png" alt="Биогеном">
+      <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()">
+    </header>
     <div class="add">
       <div class="title">Добавить БАД</div>
       <form id="addForm">
@@ -23,11 +24,14 @@
     <div id="message">
       Введите в поисковый строке искомый препарат или добавьте новый
     </div>
-    <table id="data">
-      <tbody>
-          <!-- Здесь будут отображаться данные из базы данных -->
-      </tbody>
-    </table>
+    <div id="scroll-table-body">
+      <table id="data">
+        <tbody>
+            <!-- Здесь будут отображаться данные из базы данных -->
+        </tbody>
+      </table>
+    </div>
+    
   </section>
   <div class="overlay" id="overlay"></div>
   <div class="mdal" id="change">
