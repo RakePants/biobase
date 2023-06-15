@@ -31,7 +31,7 @@ async def search_name(name: str, session: AsyncSession = Depends(get_async_sessi
 
 
 @router.post("/update")
-async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_async_session())):
+async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_async_session)):
     old_name = data.name
     new_name = data.new_name
     smtm = update(names.c.name).set(names.c.name == f'{new_name}').where(names.c.name == f'{old_name}')

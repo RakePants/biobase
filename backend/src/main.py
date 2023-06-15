@@ -1,5 +1,7 @@
 from fastapi import FastAPI
 import uvicorn
+from starlette.staticfiles import StaticFiles
+
 from operations.router import router as router_operation
 
 app = FastAPI(
@@ -8,7 +10,7 @@ app = FastAPI(
 
 app.include_router(router_operation)
 
-app.mount()
+app.mount("/", StaticFiles(directory="C:/Users/Шайтан коробка/Desktop/biobase/frontend/static", html=True), name="static")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
