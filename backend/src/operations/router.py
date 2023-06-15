@@ -8,7 +8,7 @@ from starlette.responses import JSONResponse
 
 from backend.src.database import get_async_session
 from backend.src.operations.models import names
-from backend.src.operations.schemas import ChangeNames
+from backend.src.operations.schemas import ChangeNames, SearchName
 
 from pyaspeller import YandexSpeller
 
@@ -21,8 +21,8 @@ router = APIRouter(
 
 
 @router.post("/search")
-async def search_name(name: str, session: AsyncSession = Depends(get_async_session)):
-    fixed_name = speller.spelled(name)
+async def search_name(name: SearchName, session: AsyncSession = Depends(get_async_session)):
+    fixed_name = speller.spelled(name.request)
     query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%")))
     print(query)
     result = await session.execute(query)
