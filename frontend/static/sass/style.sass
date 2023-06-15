@@ -66,8 +66,15 @@ header
 	text-align: center
 	color: #FFFFFF
 	width: 982px
-#data
+#scroll-table-body
+	display: none
 	margin: 0 auto
+	margin-top: 30px
+	height: 500px
+	width: 1200px
+	overflow-x: auto
+#data
+	width: 100%
 	border-spacing: 0 47px
 	th 
 		display: none
@@ -83,7 +90,6 @@ header
 		padding-right: 25px
 		padding-left: 60px
 		margin-top: 14px
-		width: 1200px
 		height: 90px
 		background: rgb(51, 204, 204)		
 		border-radius: 25px
@@ -92,19 +98,22 @@ header
 			font-weight: 600
 			font-size: 28px
 			line-height: 44px
+			width: 800px
 			color: #000000
+		.deleteRow
+			vertical-align: center
+			float: right
+			width: 35px
+			height: 35px
+			margin-right: 28px
 		.editRow
+			vertical-align: center
 			float: right
 			cursor: pointer
 			width: 35px
 			height: 35px
 
-.data-cell 
-	display: flex
-	justify-content: space-between
-	align-items: center
-.data-actions input[type="checkbox"] 
-	margin-right: 30px
+
 .overlay
 	display: none
 	position: fixed	
@@ -165,6 +174,7 @@ header
 			border-radius: 32px
 			padding-left: 20px
 		&__submit
+			cursor: pointer
 			display: block
 			margin: 0 auto
 			margin-top: 64px
@@ -180,9 +190,10 @@ header
 .active
 	display: block
 .delete
+	padding: 41px 55px 0px 55px
 	position: fixed
 	width: 623px
-	height: 275px
+	height: 230px
 	top: -100%
 	left: 50%
 	transform: translateX(-50%)
@@ -192,3 +203,15 @@ header
 	border-radius: 0px 0px 60px 60px
 	&_active
 		top: 0px
+	&_desc
+		font-weight: 700
+		font-size: 32px
+		line-height: 39px
+		text-align: center
+		color: #000000
+	&_actions
+		margin-top: 24px
+		display: flex
+		justify-content: space-around
+		img
+			cursor: pointer
