@@ -1,3 +1,65 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>БАДы</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="icons/favicon32.ico">
+</head>
+<body>
+  
+  <section class="main">
+    <header>
+      <img src="img/logo.png" alt="Биогеном">
+      <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()">
+    </header>
+    <div class="add">
+      <div class="title">Добавить БАД</div>
+      <form id="addForm">
+        <input type="text" required id="nameInput" placeholder="Название">
+        <input type="image" id="addBtn" alt="Login" src="img/add.png">
+      </form>
+    </div>
+    <div id="message">
+      Введите в поисковый строке искомый препарат или добавьте новый
+    </div>
+    <div id="scroll-table-body">
+      <table id="data">
+        <tbody>
+            <!-- Здесь будут отображаться данные из базы данных -->
+        </tbody>
+      </table>
+    </div>
+      
+  </section>
+  <div class="overlay" id="overlay"></div>
+  <div class="mdal" id="change">
+    <div class="mdal__close">&times;</div>
+    <div class="mdal__subtitle">Введите новое название препарата</div>
+    <div class="mdal__line"></div>
+    <form class="mdal__form" action="#">
+      <input name="name" required placeholder="Название" type="text" class="mdal__form__name">
+      <input type="submit" value="OK" class="mdal__form__submit">
+    </form>
+  </div>
+  <div id="delete" class="delete">
+    <div class="delete_desc">
+      Удалить выбранные элементы?
+    </div>
+    <div class="delete_actions">
+      <img src="img/close.png" alt="close" id="delete_close">
+      <img src="img/bin.png" alt="bin" id="delete_remove">
+    </div>
+  </div>
+
+  
+<script src="js/script.js"></script>
+  
+</body>
+</html>
+=======
 <!DOCTYPE html>
 <html>
 <head>
@@ -58,3 +120,4 @@
   
 </body>
 </html>
+>>>>>>> aba410c4a514260a3b620649c4ca7f83ca867bcc
