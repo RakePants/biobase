@@ -10,3 +10,10 @@ class ChangeNames(BaseModel):
 
 class SearchName(BaseModel):
     request: str
+
+class AddName(BaseModel):
+    name: str
+
+
+class DeleteName(BaseModel):
+    name: list
