@@ -34,7 +34,7 @@ async def search_name(name: SearchName, session: AsyncSession = Depends(get_asyn
 async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_async_session)):
     old_name = data.name
     new_name = data.new_name
-    smtm = update(names).where(names.c.name == old_name).set(name=new_name)
+    smtm = update(names).where(names.c.name == old_name).values(name=new_name)
     await session.execute(smtm)
     await session.commit()
     return {"status": "success"}
