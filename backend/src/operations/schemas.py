@@ -7,7 +7,6 @@ class ChangeNames(BaseModel):
     name: str
     new_name: str
 
-
 class SearchName(BaseModel):
     request: str
 
