@@ -12,6 +12,7 @@ speller = YandexSpeller()
 try:
     # пытаемся подключиться к базе данных
     conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres', host='localhost', port='5432')
+    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres', host='localhost', port='5432')
     cursor = conn.cursor()
     print('Connected to the database')
 except:
@@ -27,7 +28,7 @@ async def search(data = Body()):
     request = data['request']
     fixed = speller.spelled(request)
     print(fixed)
-    cursor.execute(f"select name from names where lower(name) like lower('%{fixed}%')")
+    cursor.execute(f"select name from names where lower(name) like lower('%{fixed}%') ORDER BY names.name")
     all_names = cursor.fetchall()
     print(all_names)
     return JSONResponse({"text": all_names})
@@ -43,8 +44,8 @@ def update(data = Body()):
 @app.post("/delete")
 def update(data = Body()):
     names = data["name"]
-    for i in range(len(names)):
-        cursor.execute(f"DELETE FROM names WHERE name = '{names[i]}'")
+    for name in names:
+        cursor.execute(f"DELETE FROM names WHERE name = '{name}'")
     conn.commit()
 
 @app.post("/add")
@@ -54,7 +55,7 @@ def add(data = Body()):
     conn.commit()
 
 
-app.mount("/", StaticFiles(directory="../frontend/static",html=True),name = "static")
+# app.mount("/", StaticFiles(directory="../frontend/static",html=True),name = "static")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=1337)

@@ -16,101 +16,81 @@ let toDel = 0;
 
 // Функция поиска
 function search() {
+    var scrollTable = document.getElementById('scroll-table-body');
+    scrollTable.style.display = 'block';
     var message = document.getElementById('message');
     message.style.display = 'none';
     var searchInput = document.getElementById('search');
     var filter = searchInput.value;
     var table = document.getElementById('data');
     var rows = table.querySelectorAll('tr');
-    let nnnn;
-    // // Fetch запрос к API
-    // fetch('/search', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({ request: filter })
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     while (table.rows.length > 1) {
-    //       table.deleteRow(1);
-    //     }
+    fetch('/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ request: filter.replaceAll('"', '\"') }) 
+    })
+    .then(response => response.json())
+    .then(data => {
+    while (table.rows.length > 0) {
+      table.deleteRow(table.rows.length - 1);
+    }
+    if(data.text.length == 0){
+      message.textContent = "Ничего не найдено ¯\\_(ツ)_/¯";
+      message.style.display = 'block';
+      scrollTable.style.display = 'none';
+    }
+    else{
+    data.text.forEach(rowData => { // Исправлено: обращаемся к свойству 'text' объекта 'data'
+      
   
-    //     data.text.forEach((rowData, index) => {
-    //       const newRow = document.createElement('tr');
-    //       const cell = document.createElement('td');
-    //       const div = document.createElement('div');
-    //       const button = document.createElement('img');
-    //       button.src = "img/compose.png";
+      rowData.forEach(cellData => {
+          const newRow = document.createElement('tr');
+          const cell = document.createElement('td');
+          const div = document.createElement('div');
+          const button = document.createElement('img');
+          const check = document.createElement('input');
+          check.type = 'checkbox';
+          button.src = "img/compose.png";
   
-    //       const newName = rowData.name; // Получаем новое значение из поля ввода
-    //       nnnn = rowData.name;
-    //       div.textContent = newName;
-    //       button.classList.add('editRow');
+          var newName = cellData; // Получаем новое значение из поля ввода
+          div.textContent = newName;
+          check.classList.add('deleteRow');
+          button.classList.add('editRow');
   
-    //       cell.appendChild(div);
-    //       cell.appendChild(button);
-    //       newRow.appendChild(cell);
-    //       table.querySelector('tbody').appendChild(newRow);
+          cell.appendChild(div);
+          cell.appendChild(button);
+          cell.appendChild(check);
+
+
+          newRow.appendChild(cell);
+          table.querySelector('tbody').appendChild(newRow);
   
-    //       // Назначаем обработчики событий для кнопок редактирования
-    //       button.addEventListener('click', openModal);
-    //     });
-    //   })
-    //   .catch(error => {
-    //     console.error('Error:', error);
-    //   });
-    //   alert(nnnn);
-    // Fetch запрос к API
-  fetch('/search', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ request: filter }) 
-  })
-  .then(response => response.json())
-  .then(data => {
-  while (table.rows.length > 1) {
-    table.deleteRow(1);
-  }
-
-  data.text.forEach(rowData => { // Исправлено: обращаемся к свойству 'text' объекта 'data'
-    
-
-    rowData.forEach(cellData => {
-        const newRow = document.createElement('tr');
-        const cell = document.createElement('td');
-        const div = document.createElement('div');
-        const button = document.createElement('img');
-        const check = document.createElement('input');
-        check.type = 'checkbox';  
-        button.src = "img/compose.png";
-
-        const newName = cellData; // Получаем новое значение из поля ввода
-        nnnn = cellData;
-        div.textContent = newName;
-        check.classList.add('deleteRow');
-        button.classList.add('editRow');
-
-
-        cell.appendChild(div);
-        cell.appendChild(button);
-        cell.appendChild(check);
-        table.querySelector('tbody').appendChild(newRow);
-
-        // Назначаем обработчики событий для кнопок редактирования
-        button.addEventListener('click', openModal);
-        check.addEventListener('change', function() {
-          del();
-        });
+          // Назначаем обработчики событий для кнопок редактирования
+          button.addEventListener('click', openModal);
+          check.addEventListener('change', function() {
+            if(check.checked){
+              toDel = toDel + 1;
+              if(toDel == 1) {
+                del();
+              }
+            }
+            else{
+              toDel = toDel - 1;
+              if(toDel == 0){
+                closeDel();
+              }
+            }
+          });
+      });
     });
-  });
-})
-  .catch(error => {
-    console.error('Error:', error);
-  });
+    }
+  })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  
 }
   
   
@@ -134,19 +114,20 @@ function handleSubmit(event) {
   
 
   // Получаем новое значение из поля ввода
-  const newName = nameInput.value;
-
+  var newName = nameInput.value;
+ 
   // Обновляем значение в соответствующей ячейке таблицы
   const cell = editedRow.querySelector('div');
+  var oldname = cell.textContent.replaceAll('"', '\"');
   cell.textContent = newName;
-
-  // fetch('/update', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json'
-  //   },
-  //   body: JSON.stringify({ id: rowData.id, name: newName })
-  // })
+  newName = newName.replaceAll('"', '\"');
+  fetch('/update', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name: oldname, new_name: newName })
+  })
   
   // Закрываем модальное окно
   closeModal();
@@ -169,7 +150,13 @@ div.textContent = newName;
 button.textContent = 'OK';
 check.classList.add('deleteRow');
 button.classList.add('editRow');
-
+fetch('/add', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({ name: newName.replaceAll('"', '\"')})
+})
 
 cell.appendChild(div);
 cell.appendChild(button);
@@ -231,13 +218,23 @@ addButton.addEventListener('click', function(event) {
 
 remDel.addEventListener('click', function(){
   var cells = document.querySelectorAll('td');
+  let dele = []
   for(let cell of cells){
     var check = cell.querySelector('.deleteRow');
     if(check.checked){
       var row = cell.parentNode;
+      var div = row.querySelector('div');
+      dele.push(div.textContent.replaceAll('"', '\"'));
       row.parentNode.removeChild(row);
     }
   }
+  fetch('/delete', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name: dele})
+  })
   toDel = 0;
   closeDel();
   

@@ -66,8 +66,15 @@ header
 	text-align: center
 	color: #FFFFFF
 	width: 982px
-#data
+#scroll-table-body
+	display: none
 	margin: 0 auto
+	margin-top: 30px
+	height: 500px
+	width: 1200px
+	overflow-x: auto
+#data
+	width: 100%
 	border-spacing: 0 47px
 	th 
 		display: none
@@ -83,7 +90,6 @@ header
 		padding-right: 25px
 		padding-left: 60px
 		margin-top: 14px
-		width: 1200px
 		height: 90px
 		background: rgb(51, 204, 204)		
 		border-radius: 25px
@@ -92,24 +98,22 @@ header
 			font-weight: 600
 			font-size: 28px
 			line-height: 44px
+			width: 800px
 			color: #000000
 		.deleteRow
+			vertical-align: center
 			float: right
 			width: 35px
 			height: 35px
 			margin-right: 28px
 		.editRow
+			vertical-align: center
 			float: right
 			cursor: pointer
 			width: 35px
 			height: 35px
 
-.data-cell 
-	display: flex
-	justify-content: space-between
-	align-items: center
-.data-actions input[type="checkbox"] 
-	margin-right: 30px
+
 .overlay
 	display: none
 	position: fixed	
