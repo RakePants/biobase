@@ -2,13 +2,13 @@ from fastapi import FastAPI
 import uvicorn
 from starlette.staticfiles import StaticFiles
 
-from backend.src.operations.router import router
+from operations.router import router as router_operation
 
 app = FastAPI(
     title="Biogenom App"
 )
 
-app.include_router(router)
+app.include_router(router_operation)
 
 app.mount("/", StaticFiles(directory="C:/Users/emely/OneDrive/Desktop/Проектная практика/biobase/frontend/static", html=True), name="static")
 
