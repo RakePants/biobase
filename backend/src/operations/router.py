@@ -15,7 +15,7 @@ from pyaspeller import YandexSpeller
 speller = YandexSpeller()
 
 router = APIRouter(
-    prefix="/operations",
+    prefix="",
     tags=["Operation"]
 )
 
@@ -34,7 +34,7 @@ async def search_name(name: SearchName, session: AsyncSession = Depends(get_asyn
 async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_async_session)):
     old_name = data.name
     new_name = data.new_name
-    smtm = update(names.c.name).set(names.c.name == new_name).where(names.c.name == old_name)
+    smtm = update(names).where(names.c.name == old_name).set(name=new_name)
     await session.execute(smtm)
     await session.commit()
     return {"status": "success"}
