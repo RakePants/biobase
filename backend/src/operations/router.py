@@ -57,22 +57,3 @@ async def delete_name(request: DeleteName, session: AsyncSession = Depends(get_a
 
     return {"status": "success"}
 
-# @app.post("/delete")
-# def update(data = Body()):
-#     names = data["name"]
-#     for name in names:
-#         cursor.execute(f"DELETE FROM names WHERE name = '{name}'")
-#     conn.commit()
-#
-# @app.post("/add")
-# def add(data = Body()):
-#     name = data["name"]
-#     cursor.execute(f"INSERT INTO names (name) VALUES ('{name}')")
-#     conn.commit()
-
-# @router.post("/")
-# async def add_specific_operations(new_operation: OperationCreate, session: AsyncSession = Depends(get_async_session)):
-#     stmt = insert(operation).values(**new_operation.dict())
-#     await session.execute(stmt)
-#     await session.commit()
-#     return {"status": "success"}
