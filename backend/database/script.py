@@ -1,18 +1,35 @@
+import sys
+from os.path import dirname as up
+
+project_dir = up(up(up(__file__)))
+sys.path.append(project_dir)
+
 import pandas as pd
 import psycopg2
+from backend.src.config import DB_HOST, DB_NAME, DB_PASS, DB_USER
 
-
+# пытаемся подключиться к базе данных
 try:
-    # пытаемся подключиться к базе данных
-    conn = psycopg2.connect(dbname='bio', user='postgres', password='postgres', host='127.0.0.1')
-    cursor = conn.cursor()
-except:
-    # в случае сбоя подключения будет выведено сообщение в STDOUT
-    print('Can`t establish connection to database')
+    conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_HOST)
+    cur = conn.cursor()
+    
+    print('Connected to already existing database')
+except psycopg2.OperationalError:
+    conn = psycopg2.connect(
+        host=DB_HOST,
+        user=DB_USER,
+        password=DB_PASS
+    )
+    cur = conn.cursor()
+    
+    cur.execute(f"CREATE DATABASE {DB_NAME}")
+    conn.commit()
+    cur.execute(f"GRANT ALL PRIVILEGES ON DATABASE {DB_NAME} TO {DB_USER}")
+    conn.commit()
+    print("Database created")
+    
     
 df = pd.read_csv("baa_info.csv")
-
-cur = conn.cursor()
 try:
     cur.execute("""
         CREATE TABLE names (
@@ -21,7 +38,7 @@ try:
     """)
     conn.commit()
 except psycopg2.errors.DuplicateTable:
-    print("Table already exists, skipping")
+    print("Table already exists, skipping...")
     pass
     
 
@@ -29,10 +46,10 @@ for name in df['name']:
     try:
         cur.execute("INSERT INTO names (name) VALUES (%s)", (name,))
         conn.commit()
-    except psycopg2.errors.UniqueViolation:
+    except (psycopg2.errors.UniqueViolation, psycopg2.errors.InFailedSqlTransaction):
         cur.execute("ROLLBACK")
         conn.commit()
         pass
 
-cursor.close()
+cur.close()
 conn.close()  # закрываем соединение
