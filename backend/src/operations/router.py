@@ -1,9 +1,6 @@
 import sys
 from os.path import dirname as up
 
-project_dir = up(up(up(up(__file__))))
-sys.path.append(project_dir)
-
 from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update, delete
@@ -20,6 +17,9 @@ from pyaspeller import YandexSpeller
 
 speller = YandexSpeller()
 
+project_dir = up(up(up(up(__file__))))
+sys.path.append(project_dir)
+
 router = APIRouter(
     prefix="",
     tags=["Operation"]
@@ -28,38 +28,49 @@ router = APIRouter(
 
 @router.post("/search")
 async def search_name(name: SearchName, session: AsyncSession = Depends(get_async_session)):
-    fixed_name = speller.spelled(name.request)
-    query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%")))
-    result = await session.execute(query)
-    names_from_result = [tuple(el) for el in result.all()]
-    return JSONResponse({"text": names_from_result})
+    try:
+        fixed_name = speller.spelled(name.request)
+        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%")))
+        result = await session.execute(query)
+        names_from_result = [tuple(el) for el in result.all()]
+        return JSONResponse({"text": names_from_result})
+
+    except:
+        return {"text": "error"}
 
 
 @router.post("/update")
 async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_async_session)):
-    old_name = data.name
-    new_name = data.new_name
-    smtm = update(names).where(names.c.name == old_name).values(name=new_name)
-    await session.execute(smtm)
-    await session.commit()
-    return {"status": "success"}
+    try:
+        old_name = data.name
+        new_name = data.new_name
+        smtm = update(names).where(names.c.name == old_name).values(name=new_name)
+        await session.execute(smtm)
+        await session.commit()
+        return {"status": "success"}
+    except:
+        return {"status": "error"}
+
 
 @router.post("/add")
 async def add_name(request: AddName, session: AsyncSession = Depends(get_async_session)):
-    smtm = insert(names).values(name=request.name)
-    await session.execute(smtm)
-    await session.commit()
+    try:
+        smtm = insert(names).values(name=request.name)
+        await session.execute(smtm)
+        await session.commit()
+        return {"status": "success"}
+    except:
+        return {"status": "error"}
 
-    return {"status": "success"}
 
 @router.post("/delete")
 async def delete_name(request: DeleteName, session: AsyncSession = Depends(get_async_session)):
-    names_list = request.name
-
-    for name in names_list:
-        smtm = delete(names).where(names.c.name == name)
-        await session.execute(smtm)
-        await session.commit()
-
-    return {"status": "success"}
-
+    try:
+        names_list = request.name
+        for name in names_list:
+            smtm = delete(names).where(names.c.name == name)
+            await session.execute(smtm)
+            await session.commit()
+        return {"status": "success"}
+    except:
+        return {"status": "error"}
