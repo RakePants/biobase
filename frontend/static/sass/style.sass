@@ -1,3 +1,4 @@
+@import "keyframes"
 *
 	margin: 0
 	padding: 0
@@ -215,15 +216,19 @@ header
 		justify-content: space-around
 		img
 			cursor: pointer
-.push
+.notification
 	position: fixed
+	bottom: 0px
+.push
+	position: absolute
 	bottom: -100%
 	width: 320px
 	right: 40px
 	background: #FFFFFF
 	border-radius: 31px
 	padding: 10px 5px
-	transition: 1.8s all
+	transition: 0.4s all
+	margin-bottom: 5px
 	&_close
 		position: absolute
 		left: 320px
@@ -237,4 +242,5 @@ header
 		font-size: 20px
 		line-height: 39px
 	&_active
-		bottom: 0px
+		bottom: 0
+		animation: fadeOut 2.5s forwards

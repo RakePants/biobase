@@ -135,8 +135,6 @@ function handleSubmit(event) {
 
 // Функция добавления новой строки в таблицу
 function addRow() {
-const push = document.getElementById('push');
-const mes = push.querySelector('.push_message');
 
 const newName = newDataInput.value; // Получаем новое значение из поля ввода
 
@@ -157,16 +155,45 @@ fetch('/add', {
   }
 })
 .then(data => {
-  mes.textContent = newName + " успешно добавлен!";
-  push.classList.add('push_active');
+  // Создание элементов
+  const pushContainer = document.createElement('div');
+  pushContainer.className = 'push';
+  pushContainer.id = 'push';
+
+
+  const messageContainer = document.createElement('div');
+  messageContainer.className = 'push_message';
+
+
+  pushContainer.appendChild(messageContainer);
+
+  // Добавление pushContainer в родительский элемент
+  const parentElement = document.getElementById('notification');
+  
+  // Перемещение существующих уведомлений
+  const existingNotifications = parentElement.getElementsByClassName('push');
+  if (existingNotifications.length > 0) {
+    for (let i = 0; i < existingNotifications.length; i++) {
+      const notification = existingNotifications[i];
+      notification.style.bottom = `${70 + (i * 20)}px`;    
+    }
+  }
+
+  parentElement.appendChild(pushContainer);
+
+  messageContainer.textContent = newName + " успешно добавлен!";
   setTimeout(function() {
-    push.classList.remove('push_active');
-  }, 5100);
+    pushContainer.classList.add('push_active');
+  }, 1);
+  setTimeout(function() {
+    pushContainer.remove();
+  }, 2500);
 })
 .catch(error => {
   // Действия при возникновении ошибки
   console.error(error);
 });
+
 
 
 }
