@@ -215,3 +215,26 @@ header
 		justify-content: space-around
 		img
 			cursor: pointer
+.push
+	position: fixed
+	bottom: -100%
+	width: 320px
+	right: 40px
+	background: #FFFFFF
+	border-radius: 31px
+	padding: 10px 0
+	transition: 0.8s all
+	&_close
+		position: absolute
+		left: 320px
+		top: -10px
+		color: #52E7B1
+		font-size: 30px
+		cursor: pointer
+	&_message
+		text-align: center
+		font-weight: 600
+		font-size: 20px
+		line-height: 39px
+	&_active
+		bottom: 0px
