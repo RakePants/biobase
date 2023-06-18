@@ -135,21 +135,11 @@ function handleSubmit(event) {
 
 // Функция добавления новой строки в таблицу
 function addRow() {
-message.style.display = 'none'
-const newRow = document.createElement('tr');
-const cell = document.createElement('td');
-const div = document.createElement('div');
-const button = document.createElement('img');
-const check = document.createElement('input');
-check.type = 'checkbox';
-button.src = "img/compose.png";
+const push = document.getElementById('push');
+const mes = push.querySelector('.push_message');
 
 const newName = newDataInput.value; // Получаем новое значение из поля ввода
 
-div.textContent = newName;
-button.textContent = 'OK';
-check.classList.add('deleteRow');
-button.classList.add('editRow');
 fetch('/add', {
   method: 'POST',
   headers: {
@@ -157,31 +147,28 @@ fetch('/add', {
   },
   body: JSON.stringify({ name: newName.replaceAll('"', '\"')})
 })
-
-cell.appendChild(div);
-cell.appendChild(button);
-cell.appendChild(check);
-
-
-newRow.appendChild(cell);
-dataTable.querySelector('tbody').appendChild(newRow);
-newDataInput.value = "";
-// Назначаем обработчики событий для кнопок редактирования
-button.addEventListener('click', openModal);
-check.addEventListener('change', function() {
-  if(check.checked){
-    toDel = toDel + 1;
-    if(toDel == 1) {
-      del();
-    }
+.then(response => {
+  if (response.ok) {
+    // Обработка успешного выполнения запроса
+    return response.json();
+  } else {
+    // Обработка неуспешного выполнения запроса
+    throw new Error('Request failed');
   }
-  else{
-    toDel = toDel - 1;
-    if(toDel == 0){
-      closeDel();
-    }
-  }
+})
+.then(data => {
+  mes.textContent = newName + " успешно добавлен!";
+  push.classList.add('push_active');
+  setTimeout(function() {
+    push.classList.remove('push_active');
+  }, 5100);
+})
+.catch(error => {
+  // Действия при возникновении ошибки
+  console.error(error);
 });
+
+
 }
 
 function del(){
