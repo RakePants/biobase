@@ -5,6 +5,7 @@ project_dir = up(up(up(up(__file__))))
 sys.path.append(project_dir)
 
 from fastapi import APIRouter, Depends
+from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -36,7 +37,7 @@ async def search_name(name: SearchName, session: AsyncSession = Depends(get_asyn
         return JSONResponse({"text": names_from_result, "status": "success"})
 
     except:
-        return {"status": "error"}
+        raise HTTPException(status_code=400, detail="Something went wrong")
 
 
 @router.post("/update")
@@ -47,9 +48,8 @@ async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_asy
         smtm = update(names).where(names.c.name == old_name).values(name=new_name)
         await session.execute(smtm)
         await session.commit()
-        return {"status": "success"}
     except:
-        return {"status": "error"}
+        raise HTTPException(status_code=400, detail="Duplicate name")
 
 
 @router.post("/add")
@@ -58,9 +58,8 @@ async def add_name(request: AddName, session: AsyncSession = Depends(get_async_s
         smtm = insert(names).values(name=request.name)
         await session.execute(smtm)
         await session.commit()
-        return {"status": "success"}
     except:
-        return {"status": "error"}
+        raise HTTPException(status_code=400, detail="Duplicate name")
 
 
 @router.post("/delete")
@@ -71,6 +70,5 @@ async def delete_name(request: DeleteName, session: AsyncSession = Depends(get_a
             smtm = delete(names).where(names.c.name == name)
             await session.execute(smtm)
             await session.commit()
-        return {"status": "success"}
     except:
-        return {"status": "error"}
+        raise HTTPException(status_code=400, detail="Something went wrong")

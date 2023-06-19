@@ -13,4 +13,4 @@ app.include_router(router_operation)
 app.mount("/", StaticFiles(directory="../../frontend/static", html=True), name="static")
 
 if __name__ == "__main__":
-    uvicorn.run(app, host="localhost", port=7000)
+    uvicorn.run(app, host="localhost", port=6235)
