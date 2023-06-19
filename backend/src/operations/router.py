@@ -1,6 +1,9 @@
 import sys
 from os.path import dirname as up
 
+project_dir = up(up(up(up(__file__))))
+sys.path.append(project_dir)
+
 from fastapi import APIRouter, Depends
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, insert, update, delete
@@ -16,9 +19,6 @@ from backend.src.operations.schemas import ChangeNames, SearchName, DeleteName, 
 from pyaspeller import YandexSpeller
 
 speller = YandexSpeller()
-
-project_dir = up(up(up(up(__file__))))
-sys.path.append(project_dir)
 
 router = APIRouter(
     prefix="",
