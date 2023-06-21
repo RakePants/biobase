@@ -28,13 +28,13 @@ router = APIRouter(
 
 
 @router.post("/search")
-async def search_name(name: SearchName, session: AsyncSession = Depends(get_async_session)):
+async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
     try:
         try:
-            fixed_name = speller.spelled(name.request)
+            fixed_name = speller.spelled(request.name)
         except:
             print("Speller didn't work")
-            fixed_name = name.request
+            fixed_name = request.name
         query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(names.c.name)
         result = await session.execute(query)
         names_from_result = [tuple(el) for el in result.all()]

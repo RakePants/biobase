@@ -9,7 +9,7 @@ class ChangeNames(BaseModel):
 
 
 class SearchName(BaseModel):
-    request: str
+    name: str
 
 class AddName(BaseModel):
     name: str
