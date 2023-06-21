@@ -29,13 +29,15 @@ function search() {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ request: filter.replaceAll('"', '\"') }) 
+      body: JSON.stringify({ name: filter.replaceAll('"', '\"') }) 
     })
     .then(response => {
       if (response.ok) {
         return response.json();
       } else {
-        throw new Error('Request failed');
+        return response.json().then(error => {
+          throw new Error(error.detail);
+        })
       }
     })
     .then(data => {
@@ -132,19 +134,13 @@ function handleSubmit(event) {
     body: JSON.stringify({ name: oldname, new_name: newName })
   })
   .then(response => {
-    if (response.ok) {
-      return response.json();
-    } else {
-      throw new Error('Request failed');
-    }
-  })
-  .then(data => {
-    // Закрываем модальное окно
     closeModal();
-    if (data.status === 'success') {
-      pushNotification('Запись успешно изменена!');
+    if (response.ok) {
+      pushNotification('Запись изменена!');
     } else {
-      pushNotification('Ошибка при изменении! ');
+      return response.json().then(error => {
+        throw new Error(error.detail);
+      });    
     }
   })
   .catch(handleFetchError);
@@ -162,31 +158,29 @@ fetch('/add', {
   headers: {
     'Content-Type': 'application/json'
   },
-  body: JSON.stringify({ name: newName.replaceAll('"', '\"')})
+  body: JSON.stringify({ name: newName.replaceAll('"', '\"') })
 })
 .then(response => {
   if (response.ok) {
-    return response.json();
-  } else {
-    throw new Error('Request failed');
-  }
-})
-.then(data => {
-  if (data.status === 'success') {
     pushNotification(newName + ' успешно добавлен!');
   } else {
-    pushNotification('Ошибка при добавлении ' + newName);
+    return response.json().then(error => {
+      throw new Error(error.detail);
+    });
   }
 })
 .catch(handleFetchError);
 
 
+
+
+
+}
 // Функция обработки ошибок
 function handleFetchError(error) {
-  pushNotification(error.message);
-}
-
-
+ 
+  pushNotification('Ошибка: ' + error.message);
+  
 }
 
 function del(){
@@ -276,13 +270,16 @@ remDel.addEventListener('click', function(){
     body: JSON.stringify({ name: dele})
   })
   .then(response => {
+    toDel = 0;
+    closeDel();
     if (!response.ok) {
-      throw new Error('Request failed');
+      return response.json().then(error => {
+        throw new Error(error.detail);
+      });
     }
   })
   .catch(handleFetchError);
-  toDel = 0;
-  closeDel();
+  
   
 })
 
