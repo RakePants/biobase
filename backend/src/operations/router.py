@@ -19,6 +19,10 @@ from backend.src.operations.schemas import ChangeNames, SearchName, DeleteName, 
 
 from pyaspeller import YandexSpeller
 
+# import pymorphy3
+#
+# morph = pymorphy3.MorphAnalyzer()
+
 speller = YandexSpeller()
 
 router = APIRouter(
@@ -35,7 +39,12 @@ async def search_name(request: SearchName, session: AsyncSession = Depends(get_a
         except:
             print("Speller didn't work")
             fixed_name = request.name
-        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(names.c.name)
+
+        # fixed_name = morph.parse(fixed_name)[0].normal_form
+        # print(fixed_name)
+
+        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(
+            names.c.name)
         result = await session.execute(query)
         names_from_result = [tuple(el) for el in result.all()]
         return JSONResponse({"text": names_from_result, "you_mean": fixed_name})
