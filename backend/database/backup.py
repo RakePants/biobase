@@ -24,4 +24,4 @@ def backup():
         print(f"Uploaded {filename}")
 
     else:
-        print('Token is invalid')
+        print('Token is invalid, no backup created')
