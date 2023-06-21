@@ -1,5 +1,40 @@
+let diff = 0;
+
+// Функция для вариантов поиска
+function whatMean() {
+  meanBlock.style.display = 'block';
+  var searchInput = document.getElementById('search');
+  var filter = searchInput.value;
+
+  if(Math.abs(filter.length - diff) >= 2){
+    diff = filter.length;
+    fetch('/search', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: filter.replaceAll('"', '\"') })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return response.json().then(error => {
+            throw new Error(error.detail);
+          });
+        }
+      })
+      .then(data => {
+        // Обработка полученных данных
+        meanWord.textContent = data.you_mean;
+      })
+      .catch(handleFetchError);
+  }
+}
+
 // Функция поиска
 function search() {
+    meanBlock.style.display = 'none';
     // Отображение таблицы и скрытие сообщения
     var scrollTable = document.getElementById('scroll-table-body');
     scrollTable.style.display = 'block';
@@ -115,8 +150,19 @@ function addRow() {
   }
 //Функция удаления строк
 function delRows(){
-    
-    fetch('/delete', {
+  var cells = document.querySelectorAll('td');
+  let dele = [];
+  for (let cell of cells) {
+  var check = cell.querySelector('.deleteRow');
+  if (check.checked) {
+          var row = cell.parentNode;
+          var div = row.querySelector('div');
+          dele.push(div.textContent.replaceAll('"', '\"'));
+          check.checked = true;
+          
+      }
+  }
+  fetch('/delete', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -125,29 +171,29 @@ function delRows(){
     })
       .then(response => {
         toDel = 0;
-        closeDelModal();
+        
         if (!response.ok) 
         {
           return response.json().then(error => {
+            closeDelModal();
             throw new Error(error.detail);
           });
         }
         else 
         {
-            var cells = document.querySelectorAll('td');
-            let dele = [];
             for (let cell of cells) {
-            var check = cell.querySelector('.deleteRow');
-            if (check.checked) {
-                    var row = cell.parentNode;
-                    var div = row.querySelector('div');
-                    dele.push(div.textContent.replaceAll('"', '\"'));
-                    row.parentNode.removeChild(row);
-                }
+              var check = cell.querySelector('.deleteRow');
+              console.log(1);
+              if (check.checked){
+                var row = cell.parentNode;
+                row.remove();
+                      
+              }
             }
+            closeDelModal();
             pushNotification('Записи успешно удалены!');
         }
       })
       .catch(handleFetchError);
   }
-  
+

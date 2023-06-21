@@ -12,7 +12,14 @@
   <section class="main">
     <header>
       <img src="img/logo.png" alt="Биогеном">
-      <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()">
+      <div class="searchblock">
+        <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()" oninput="whatMean()">
+        <div class="mean">
+          <div class="mean_title">Возможно, вы имели в виду</div>
+          <div class="mean_word"></div>
+        </div>
+      </div>
+      
     </header>
     <div class="add">
       <div class="title">Добавить БАД</div>

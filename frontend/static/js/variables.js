@@ -10,5 +10,7 @@ const dataTable = document.getElementById('data');
 const newDataInput = document.getElementById('nameInput');
 const closDel = document.getElementById('delete_close');
 const remDel = document.getElementById('delete_remove');
+const meanBlock = document.querySelector('.mean');
+const meanWord = document.querySelector('.mean_word');
 let editedRow; // Переменная для хранения ссылки на редактируемую строку
 let toDel = 0;

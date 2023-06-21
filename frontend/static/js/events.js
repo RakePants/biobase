@@ -26,3 +26,9 @@ editButtons.forEach(button => {
   closDel.addEventListener('click', function () {
     closeDelModal();
   });
+
+  meanWord.addEventListener('click', function(){
+    var input = document.getElementById('search');
+    input.value = meanWord.textContent;
+    search();
+  })
