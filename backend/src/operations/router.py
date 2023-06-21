@@ -53,7 +53,7 @@ async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_asy
         await session.execute(smtm)
         await session.commit()
     except:
-        raise HTTPException(status_code=400, detail="Duplicate name")
+        raise HTTPException(status_code=400, detail="Duplicate name or value not found")
 
 
 @router.post("/add")
