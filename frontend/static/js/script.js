@@ -31,7 +31,13 @@ function search() {
       },
       body: JSON.stringify({ request: filter.replaceAll('"', '\"') }) 
     })
-    .then(response => response.json())
+    .then(response => {
+      if (response.ok) {
+        return response.json();
+      } else {
+        throw new Error('Request failed');
+      }
+    })
     .then(data => {
     while (table.rows.length > 0) {
       table.deleteRow(table.rows.length - 1);
@@ -87,10 +93,7 @@ function search() {
     });
     }
   })
-    .catch(error => {
-      console.error('Error:', error);
-    });
-  
+  .catch(handleFetchError);
 }
   
   
@@ -128,9 +131,25 @@ function handleSubmit(event) {
     },
     body: JSON.stringify({ name: oldname, new_name: newName })
   })
+  .then(response => {
+    if (response.ok) {
+      return response.json();
+    } else {
+      throw new Error('Request failed');
+    }
+  })
+  .then(data => {
+    // Закрываем модальное окно
+    closeModal();
+    if (data.status === 'success') {
+      pushNotification('Запись успешно изменена!');
+    } else {
+      pushNotification('Ошибка при изменении! ');
+    }
+  })
+  .catch(handleFetchError);
   
-  // Закрываем модальное окно
-  closeModal();
+
 }
 
 // Функция добавления новой строки в таблицу
@@ -147,53 +166,25 @@ fetch('/add', {
 })
 .then(response => {
   if (response.ok) {
-    // Обработка успешного выполнения запроса
     return response.json();
   } else {
-    // Обработка неуспешного выполнения запроса
     throw new Error('Request failed');
   }
 })
 .then(data => {
-  // Создание элементов
-  const pushContainer = document.createElement('div');
-  pushContainer.className = 'push';
-  pushContainer.id = 'push';
-
-
-  const messageContainer = document.createElement('div');
-  messageContainer.className = 'push_message';
-
-
-  pushContainer.appendChild(messageContainer);
-
-  // Добавление pushContainer в родительский элемент
-  const parentElement = document.getElementById('notification');
-  
-  // Перемещение существующих уведомлений
-  const existingNotifications = parentElement.getElementsByClassName('push');
-  if (existingNotifications.length > 0) {
-    for (let i = 0; i < existingNotifications.length; i++) {
-      const notification = existingNotifications[i];
-      notification.style.bottom = `${70 + (i * 20)}px`;    
-    }
+  if (data.status === 'success') {
+    pushNotification(newName + ' успешно добавлен!');
+  } else {
+    pushNotification('Ошибка при добавлении ' + newName);
   }
-
-  parentElement.appendChild(pushContainer);
-
-  messageContainer.textContent = newName + " успешно добавлен!";
-  setTimeout(function() {
-    pushContainer.classList.add('push_active');
-  }, 1);
-  setTimeout(function() {
-    pushContainer.remove();
-  }, 2500);
 })
-.catch(error => {
-  // Действия при возникновении ошибки
-  console.error(error);
-});
+.catch(handleFetchError);
 
+
+// Функция обработки ошибок
+function handleFetchError(error) {
+  pushNotification(error.message);
+}
 
 
 }
@@ -208,6 +199,41 @@ function del(){
 function closeDel() {
   var del = document.getElementById("delete");
   del.classList.remove("delete_active");
+}
+
+function pushNotification(text){
+   const pushContainer = document.createElement('div');
+   pushContainer.className = 'push';
+   pushContainer.id = 'push';
+ 
+ 
+   const messageContainer = document.createElement('div');
+   messageContainer.className = 'push_message';
+ 
+ 
+   pushContainer.appendChild(messageContainer);
+ 
+   // Добавление pushContainer в родительский элемент
+   const parentElement = document.getElementById('notification');
+   
+   // Перемещение существующих уведомлений
+   const existingNotifications = parentElement.getElementsByClassName('push');
+   if (existingNotifications.length > 0) {
+     for (let i = 0; i < existingNotifications.length; i++) {
+       const notification = existingNotifications[i];
+       notification.style.bottom = `${70 + (i * 20)}px`;    
+     }
+   }
+ 
+   parentElement.appendChild(pushContainer);
+ 
+   messageContainer.textContent = text;
+   setTimeout(function() {
+     pushContainer.classList.add('push_active');
+   }, 1);
+   setTimeout(function() {
+     pushContainer.remove();
+   }, 2500);
 }
 
 
@@ -249,6 +275,12 @@ remDel.addEventListener('click', function(){
     },
     body: JSON.stringify({ name: dele})
   })
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Request failed');
+    }
+  })
+  .catch(handleFetchError);
   toDel = 0;
   closeDel();
   
