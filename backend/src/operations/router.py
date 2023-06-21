@@ -35,7 +35,7 @@ async def search_name(name: SearchName, session: AsyncSession = Depends(get_asyn
         except:
             print("Speller didn't work")
             fixed_name = name.request
-        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%")))
+        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(names.c.name)
         result = await session.execute(query)
         names_from_result = [tuple(el) for el in result.all()]
         return JSONResponse({"text": names_from_result, "you_mean": fixed_name})
