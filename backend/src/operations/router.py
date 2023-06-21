@@ -38,7 +38,7 @@ async def search_name(name: SearchName, session: AsyncSession = Depends(get_asyn
         query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%")))
         result = await session.execute(query)
         names_from_result = [tuple(el) for el in result.all()]
-        return JSONResponse({"text": names_from_result, "status": "success"})
+        return JSONResponse({"text": names_from_result, "you_mean": fixed_name})
 
     except:
         raise HTTPException(status_code=400, detail="Something went wrong")
