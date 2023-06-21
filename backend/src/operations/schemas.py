@@ -11,6 +11,7 @@ class ChangeNames(BaseModel):
 class SearchName(BaseModel):
     name: str
 
+
 class AddName(BaseModel):
     name: str
 
