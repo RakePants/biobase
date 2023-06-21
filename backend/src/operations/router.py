@@ -40,19 +40,11 @@ async def search_name(request: SearchName, session: AsyncSession = Depends(get_a
             print("Speller didn't work")
             fixed_name = request.name
 
-        # if ' ' in not_morph_fixed_name:
-        #     not_morph_fixed_names = not_morph_fixed_name.split(' ')
-        #     print(not_morph_fixed_names)
-        #     fixed_names = []
-        #     for name in not_morph_fixed_names:
-        #         fixed_names.append(morph.parse(name)[0].normal_form)
-        #
-        #     fixed_name = ' '.join(fixed_names)
-        # else:
-        #     fixed_name = morph.parse(not_morph_fixed_name)[0].normal_form
+        # fixed_name = morph.parse(fixed_name)[0].normal_form
         # print(fixed_name)
 
-        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(names.c.name)
+        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(
+            names.c.name)
         result = await session.execute(query)
         names_from_result = [tuple(el) for el in result.all()]
         return JSONResponse({"text": names_from_result, "you_mean": fixed_name})
