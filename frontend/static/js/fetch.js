@@ -5,7 +5,7 @@ function search() {
     scrollTable.style.display = 'block';
     var message = document.getElementById('message');
     message.style.display = 'none';
-  
+    var rowscount = document.querySelector('.rows_count');
     // Получение значения для фильтрации
     var searchInput = document.getElementById('search');
     var filter = searchInput.value;
@@ -40,7 +40,11 @@ function search() {
           message.textContent = "Ничего не найдено ¯\\_(ツ)_/¯";
           message.style.display = 'block';
           scrollTable.style.display = 'none';
+          rowscount.style.display = 'none';
         } else {
+            
+            rowscount.textContent = 'Количество записей: ' + data.text.length;
+            rowscount.style.display = 'block';
           // Создание новых строк таблицы
           data.text.forEach(rowData => {
             rowData.forEach(cellData => {
