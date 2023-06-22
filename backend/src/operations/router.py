@@ -30,23 +30,32 @@ router = APIRouter(
     tags=["Operation"]
 )
 
+
+@router.post("/number_of_entries")
+async def number_of_entries(session: AsyncSession = Depends(get_async_session)):
+    result = await session.execute(select(func.count()).select_from(names))
+
+    return JSONResponse({"number_of_entries": result.all()[0][0]})
+
+
 @router.post("/correct")
-async def correct_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
+async def correct_name(request: SearchName):
     try:
         fixed_name = speller.spelled(request.name)
     except:
         print("Speller didn't work")
         fixed_name = request.name
+    print(fixed_name)
     return {"you_mean": fixed_name}
 
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
     try:
-        name = request.name
+        name = speller.spelled(request.name)
 
         # fixed_name = morph.parse(fixed_name)[0].normal_form
         # print(fixed_name)
-
+        print(name)
         query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{name}%"))).order_by(
             names.c.name)
         result = await session.execute(query)
