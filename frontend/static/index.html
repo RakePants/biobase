@@ -13,7 +13,7 @@
     <header>
       <img src="img/logo.png" alt="Биогеном">
       <div class="searchblock">
-        <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()" oninput="whatMean()">
+        <input type="search" id="search" placeholder="Поиск БАДов..." onchange="search()" oninput="whatMean()" onblur="meanBlur()">
         <div class="mean">
           <div class="mean_title">Возможно, вы имели в виду</div>
           <div class="mean_word"></div>
@@ -28,12 +28,13 @@
         <input type="image" id="addBtn" alt="Login" src="img/add.png">
       </form>
     </div>
-    <div id="message">
-      Введите в поисковый строке искомый препарат или добавьте новый
-    </div>
     <div class="rows_count">
       
     </div>
+    <div id="message">
+      Введите в поисковый строке искомый препарат или добавьте новый
+    </div>
+    
     <div id="scroll-table-body">
       <table id="data">
         <tbody>

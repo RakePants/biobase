@@ -1,4 +1,6 @@
-
+function meanBlur(){
+  meanBlock.style.display = 'none';
+}
 // Функция создания строки с данными
 function createTableRow(cellData) {
   var table = document.getElementById('data');

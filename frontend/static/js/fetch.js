@@ -44,7 +44,28 @@ function search() {
     // Получение значения для фильтрации
     var searchInput = document.getElementById('search');
     var filter = searchInput.value;
-  
+    fetch('/correct', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ name: filter.replaceAll('"', '\"') })
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          return response.json().then(error => {
+            throw new Error(error.detail);
+          });
+        }
+      })
+      .then(data => {
+        // Обработка полученных данных
+        filter = data.you_mean;
+        searchInput.value = filter;
+      })
+      .catch(handleFetchError);
     // Очистка таблицы
     var table = document.getElementById('data');
     while (table.rows.length > 0) {
