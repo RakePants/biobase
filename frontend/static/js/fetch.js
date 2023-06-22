@@ -8,7 +8,7 @@ function whatMean() {
 
   if(Math.abs(filter.length - diff) >= 2){
     diff = filter.length;
-    fetch('/search', {
+    fetch('/correct', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

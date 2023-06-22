@@ -30,24 +30,28 @@ router = APIRouter(
     tags=["Operation"]
 )
 
+@router.post("/correct")
+async def correct_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
+    try:
+        fixed_name = speller.spelled(request.name)
+    except:
+        print("Speller didn't work")
+        fixed_name = request.name
+    return {"you_mean": fixed_name}
 
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
     try:
-        try:
-            fixed_name = speller.spelled(request.name)
-        except:
-            print("Speller didn't work")
-            fixed_name = request.name
+        name = request.name
 
         # fixed_name = morph.parse(fixed_name)[0].normal_form
         # print(fixed_name)
 
-        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{fixed_name}%"))).order_by(
+        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{name}%"))).order_by(
             names.c.name)
         result = await session.execute(query)
         names_from_result = [tuple(el) for el in result.all()]
-        return JSONResponse({"text": names_from_result, "you_mean": fixed_name})
+        return JSONResponse({"text": names_from_result})
 
     except:
         raise HTTPException(status_code=400, detail="Something went wrong")
