@@ -1,9 +1,7 @@
-alembic==1.11.1
 fastapi==0.97.0
 pandas==1.5.0
 psycopg2_binary==2.9.6
 pyaspeller==1.1.0
-pydantic==1.10.2
 python-dotenv==1.0.0
 SQLAlchemy==1.4.48
 starlette

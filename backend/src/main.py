@@ -1,12 +1,19 @@
 from fastapi import FastAPI
 import uvicorn
+from starlette.middleware.cors import CORSMiddleware
 from starlette.staticfiles import StaticFiles
+import datetime
 
+from backend.database.backup import backup
 from operations.router import router as router_operation
 
 app = FastAPI(
     title="Biogenom App"
 )
+
+if datetime.datetime.now().hour == 3:
+    backup()
+
 
 app.include_router(router_operation)
 
