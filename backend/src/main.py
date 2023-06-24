@@ -11,8 +11,11 @@ app = FastAPI(
     title="Biogenom App"
 )
 
-if datetime.datetime.now().hour == 3:
+time_temp = datetime.datetime.now().minute
+
+if time_temp - datetime.datetime.now().minute > 2:
     backup()
+    time_temp = datetime.datetime.now().minute
 
 
 app.include_router(router_operation)
