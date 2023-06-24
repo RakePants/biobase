@@ -1,3 +1,9 @@
+import sys
+from os.path import dirname as up
+
+project_dir = up(up(up(__file__)))
+sys.path.append(project_dir)
+
 from fastapi import FastAPI
 import uvicorn
 from starlette.middleware.cors import CORSMiddleware
