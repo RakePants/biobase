@@ -7,10 +7,10 @@ sys.path.append(project_dir)
 import yadisk
 import os
 import datetime
-from backend.src.config import DB_HOST, DB_NAME, DB_PASS, DB_USER, DB_PORT, YA_TOKEN
+from backend.src.config import DB_NAME, YA_TOKEN
 
 
-def backup():
+async def backup():
     
     dump_dir = os.getcwd() + '/dumps/'
     filename = f"{DB_NAME}{datetime.date.today().strftime('%d:%m:%Y')}.dump"
