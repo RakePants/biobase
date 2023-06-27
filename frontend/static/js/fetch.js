@@ -1,71 +1,47 @@
-let diff = 0;
 
-// Функция для вариантов поиска
+
 function whatMean() {
   meanBlock.style.display = 'block';
-  var searchInput = document.getElementById('search');
-  var filter = searchInput.value;
-
-  if(Math.abs(filter.length - diff) >= 2){
-    diff = filter.length;
-    fetch('/correct', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: filter.replaceAll('"', '\"') })
+  var filter = inputsearch.value;
+  console.log(1);
+  fetch('/correct', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ name: filter.replaceAll('"', '\"') })
+  })
+    .then(function(response) {
+      if (response.ok) {
+        return response.json();
+      } else {
+        return response.json().then(function(error) {
+          throw new Error(error.detail);
+        });
+      }
     })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          return response.json().then(error => {
-            throw new Error(error.detail);
-          });
-        }
-      })
-      .then(data => {
-        // Обработка полученных данных
-        meanWord.textContent = data.you_mean;
-      })
-      .catch(handleFetchError);
-  }
+    .then(function(data) {
+      // Обработка полученных данных
+      meanWord.textContent = data.you_mean;
+    })
+    .catch(handleFetchError);
 }
-
 // Функция поиска
 function search() {
-    meanBlock.style.display = 'none';
+    var loader = document.getElementById('loader');
+    loader.style.display = 'block';
+    inputsearch.blur();
     // Отображение таблицы и скрытие сообщения
     var scrollTable = document.getElementById('scroll-table-body');
     scrollTable.style.display = 'block';
     var message = document.getElementById('message');
     message.style.display = 'none';
+    
     var rowscount = document.querySelector('.rows_count');
     // Получение значения для фильтрации
     var searchInput = document.getElementById('search');
     var filter = searchInput.value;
-    fetch('/correct', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name: filter.replaceAll('"', '\"') })
-    })
-      .then(response => {
-        if (response.ok) {
-          return response.json();
-        } else {
-          return response.json().then(error => {
-            throw new Error(error.detail);
-          });
-        }
-      })
-      .then(data => {
-        // Обработка полученных данных
-        filter = data.you_mean;
-        searchInput.value = filter;
-      })
-      .catch(handleFetchError);
+    
     // Очистка таблицы
     var table = document.getElementById('data');
     while (table.rows.length > 0) {
@@ -108,8 +84,10 @@ function search() {
             });
           });
         }
+        loader.style.display = 'none';
       })
       .catch(handleFetchError);
+
   }
 
   // Функция обработки отправки формы

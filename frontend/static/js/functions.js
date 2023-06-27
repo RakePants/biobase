@@ -1,3 +1,12 @@
+function delay(callback, delayTime) {
+  var timerId;
+  return function() {
+    clearTimeout(timerId);
+    timerId = setTimeout(function() {
+      callback.apply(this, arguments);
+    }, delayTime || 0);
+  };
+}
 function meanBlur(){
   meanBlock.style.display = 'none';
 }
@@ -61,6 +70,8 @@ function closeModal() {
 
 // Функция обработки ошибок при выполнении запросов
 function handleFetchError(error) {
+  var loader = document.getElementById('loader');
+  loader.style.display = 'none';
   pushNotification('Ошибка: ' + error.message);
 }
 
