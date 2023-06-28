@@ -224,7 +224,6 @@ fetch('/delete', {
       {
           for (let cell of cells) {
             var check = cell.querySelector('.deleteRow');
-            console.log(1);
             if (check.checked){
               var row = cell.parentNode;
               row.remove();
@@ -364,7 +363,7 @@ function pushNotification(text) {
   }, 1);
   setTimeout(function () {
     pushContainer.remove();
-  }, 2500);
+  }, 7000);
 }
 
 // Назначение обработчиков событий
