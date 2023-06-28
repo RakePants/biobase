@@ -51,7 +51,7 @@ async def correct_name(request: SearchName):
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
     try:
-        name = speller.spelled(request.name)
+        name = request.name
 
         # fixed_name = morph.parse(fixed_name)[0].normal_form
         # print(fixed_name)
