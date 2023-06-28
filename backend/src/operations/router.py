@@ -45,7 +45,6 @@ async def correct_name(request: SearchName):
     except:
         print("Speller didn't work")
         fixed_name = request.name
-    print(fixed_name)
     return {"you_mean": fixed_name}
 
 @router.post("/search")
@@ -55,7 +54,6 @@ async def search_name(request: SearchName, session: AsyncSession = Depends(get_a
 
         # fixed_name = morph.parse(fixed_name)[0].normal_form
         # print(fixed_name)
-        print(name)
         query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{name}%"))).order_by(
             names.c.name)
         result = await session.execute(query)
