@@ -7,7 +7,7 @@
 ## Документация
 - Пользовательская документация:  
 https://docs.google.com/document/d/15jXUXufzPkpIRk8koStgMBjYQCMFFzMOqX54WgLT-7s/edit?usp=sharing
-- Докуменатация к API:  
+- Документация к API:  
 https://docs.google.com/document/d/1E52mJwjSvITy411s2-mdIqTTjtliYyh365mc-vGbm2o/edit?usp=sharing
 - Документация по развертыванию:
 https://docs.google.com/document/d/1kilYWSheWDEDOVhvbuUDsKdcWmQNhgBU4CHBrhgF6zA/edit?usp=sharing
