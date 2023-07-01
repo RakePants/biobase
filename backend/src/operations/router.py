@@ -7,7 +7,7 @@ sys.path.append(project_dir)
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select, insert, update, delete
+from sqlalchemy import select, insert, update, delete, text
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
@@ -19,11 +19,14 @@ from backend.src.operations.schemas import ChangeNames, SearchName, DeleteName, 
 
 from pyaspeller import YandexSpeller
 
+from googletrans import Translator
+
 # import pymorphy3
 #
 # morph = pymorphy3.MorphAnalyzer()
 
 speller = YandexSpeller()
+translator = Translator()
 
 router = APIRouter(
     prefix="",
@@ -47,21 +50,19 @@ async def correct_name(request: SearchName):
         fixed_name = request.name
     return {"you_mean": fixed_name}
 
+
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
-    try:
-        name = request.name
+    name = request.name
+    print(translator.translate(name))
+    await session.execute(text('CREATE EXTENSION IF NOT EXISTS pg_trgm'))
+    await session.execute(text('SELECT set_limit(0.1)'))
 
-        # fixed_name = morph.parse(fixed_name)[0].normal_form
-        # print(fixed_name)
-        query = select(names.c.name).where(func.lower(names.c.name).like(func.lower(f"%{name}%"))).order_by(
-            names.c.name)
-        result = await session.execute(query)
-        names_from_result = [tuple(el) for el in result.all()]
-        return JSONResponse({"text": names_from_result, "you_mean": name})
-
-    except:
-        raise HTTPException(status_code=400, detail="Something went wrong")
+    query = select(names.c.name).where(func.lower(names.c.name).bool_op('%')(func.lower(name))).order_by(
+        func.similarity(names.c.name, name).desc())
+    result = await session.execute(query)
+    names_from_result = [tuple(el) for el in result.all()]
+    return JSONResponse({"text": names_from_result, "you_mean": name})
 
 
 @router.post("/update")
