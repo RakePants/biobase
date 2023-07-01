@@ -49,7 +49,8 @@ df = pd.read_csv("baa_info.csv")
 try:
     cur.execute("""
         CREATE TABLE baa (
-            name varchar PRIMARY KEY
+            name varchar PRIMARY KEY,
+            original bool
         )
     """)
     cur.execute(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {DB_USER}")
@@ -62,7 +63,7 @@ except psycopg2.errors.DuplicateTable:
     
 for name in df['name']:
     try:
-        cur.execute("INSERT INTO baa (name) VALUES (%s)", (name,))
+        cur.execute("INSERT INTO baa (name, original) VALUES (%s, %s)", (name, True))
     except (psycopg2.errors.UniqueViolation):
         cur.execute("ROLLBACK")
         pass
