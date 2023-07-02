@@ -62,7 +62,7 @@ except psycopg2.errors.DuplicateTable:
     cur.execute("""
         CREATE TABLE baa (
             name varchar PRIMARY KEY,
-            original bool
+            original bool default true
         )
     """)
     cur.execute(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {DB_USER}")
