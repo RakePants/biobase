@@ -54,11 +54,15 @@ async def correct_name(request: SearchName):
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
     name = request.name
-    transleted_name = GoogleTranslator(source='auto', target='eu').translate(text=name)
+    transleted_name_eu = GoogleTranslator(source='auto', target='eu').translate(text=name)
+    transleted_name_ru = GoogleTranslator(source='auto', target='ru').translate(text=name)
     await session.execute(text('CREATE EXTENSION IF NOT EXISTS pg_trgm'))
     await session.execute(text('SELECT set_limit(0.1)'))
-
-    query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(transleted_name)))).order_by(
+    if name == transleted_name_eu:
+        query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(transleted_name_ru)))).order_by(
+        func.similarity(names.c.name, name).desc())
+    else:
+        query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(transleted_name_eu)))).order_by(
         func.similarity(names.c.name, name).desc())
     result = await session.execute(query)
     names_from_result = [tuple(el) for el in result.all()]
