@@ -53,23 +53,26 @@ async def correct_name(request: SearchName):
 
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
-    name = request.name
-    translated_name_eu = GoogleTranslator(source='auto', target='eu').translate(text=name)
-    translated_name_ru = GoogleTranslator(source='auto', target='ru').translate(text=name)
+    try:
+        name = request.name
+        translated_name_eu = GoogleTranslator(source='auto', target='eu').translate(text=name)
+        translated_name_ru = GoogleTranslator(source='auto', target='ru').translate(text=name)
 
-    await session.execute(text('CREATE EXTENSION IF NOT EXISTS pg_trgm'))
-    await session.execute(text('SELECT set_limit(0.1)'))
+        await session.execute(text('CREATE EXTENSION IF NOT EXISTS pg_trgm'))
+        await session.execute(text('SELECT set_limit(0.1)'))
 
-    if name == translated_name_eu:
-        query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_ru)))).order_by(
-        func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, translated_name_ru).desc())
-    else:
-        query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_eu)))).order_by(
-        func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, translated_name_eu).desc())
+        if name == translated_name_eu:
+            query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_ru)))).order_by(
+            func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, translated_name_ru).desc())
+        else:
+            query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_eu)))).order_by(
+            func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, translated_name_eu).desc())
 
-    result = await session.execute(query)
-    names_from_result = [tuple(el) for el in result.all()]
-    return JSONResponse({"text": names_from_result, "you_mean": name})
+        result = await session.execute(query)
+        names_from_result = [tuple(el) for el in result.all()]
+        return JSONResponse({"text": names_from_result, "you_mean": name})
+    except:
+        raise HTTPException(status_code=400, detail="Something went wrong")
 
 
 @router.post("/update")
