@@ -55,9 +55,18 @@ try:
     """)
     cur.execute(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {DB_USER}")
     print("Created new table 'baa'")
+    
 except psycopg2.errors.DuplicateTable:
-    cur.execute(f"TRUNCATE TABLE baa")
-    print("Table already exists, cleaning...")
+    print("Encountered already existing table 'baa', dropping...")
+    cur.execute("DROP TABLE baa")
+    cur.execute("""
+        CREATE TABLE baa (
+            name varchar PRIMARY KEY,
+            original bool
+        )
+    """)
+    cur.execute(f"GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO {DB_USER}")
+    print("Recreated table 'baa'")
 
 
     
