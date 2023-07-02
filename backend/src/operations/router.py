@@ -62,7 +62,7 @@ async def search_name(request: SearchName, session: AsyncSession = Depends(get_a
         await session.execute(text('SELECT set_limit(0.1)'))
 
         if name == translated_name_eu:
-            query = select(names.c.name,names.c.original).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_ru)))).order_by(
+            query = select(names.c.name, names.c.original).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_ru)))).order_by(
             func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, translated_name_ru).desc())
         else:
             query = select(names.c.name, names.c.original).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(translated_name_eu)))).order_by(
@@ -81,7 +81,7 @@ async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_asy
     try:
         old_name = data.name
         new_name = data.new_name
-        smtm = update(names).where(names.c.name == old_name).values(name=new_name)
+        smtm = update(names).where(names.c.name == old_name).values(name=new_name, original=False)
         await session.execute(smtm)
         await session.commit()
     except:
@@ -91,7 +91,7 @@ async def update_name(data: ChangeNames, session: AsyncSession = Depends(get_asy
 @router.post("/add")
 async def add_name(request: AddName, session: AsyncSession = Depends(get_async_session)):
     try:
-        smtm = insert(names).values(name=request.name)
+        smtm = insert(names).values(name=request.name, original=False)
         await session.execute(smtm)
         await session.commit()
     except:
