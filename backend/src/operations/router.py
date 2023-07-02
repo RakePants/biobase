@@ -62,10 +62,10 @@ async def search_name(request: SearchName, session: AsyncSession = Depends(get_a
 
     if name == transleted_name_eu:
         query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(transleted_name_ru)))).order_by(
-        func.similarity(names.c.name, name).desc())
+        func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, transleted_name_ru).desc())
     else:
         query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(transleted_name_eu)))).order_by(
-        func.similarity(names.c.name, name).desc())
+        func.similarity(names.c.name, name).desc(), func.similarity(names.c.name, transleted_name_eu).desc())
 
     result = await session.execute(query)
     names_from_result = [tuple(el) for el in result.all()]
