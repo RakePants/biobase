@@ -7,7 +7,7 @@ sys.path.append(project_dir)
 from fastapi import APIRouter, Depends
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import select, insert, update, delete, text
+from sqlalchemy import select, insert, update, delete, text, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import func
 from sqlalchemy.orm import load_only
@@ -19,14 +19,14 @@ from backend.src.operations.schemas import ChangeNames, SearchName, DeleteName, 
 
 from pyaspeller import YandexSpeller
 
-from googletrans import Translator
+from deep_translator import GoogleTranslator
 
 # import pymorphy3
 #
 # morph = pymorphy3.MorphAnalyzer()
 
 speller = YandexSpeller()
-translator = Translator()
+
 
 router = APIRouter(
     prefix="",
@@ -54,11 +54,11 @@ async def correct_name(request: SearchName):
 @router.post("/search")
 async def search_name(request: SearchName, session: AsyncSession = Depends(get_async_session)):
     name = request.name
-    print(translator.translate(name))
+    transleted_name = GoogleTranslator(source='auto', target='eu').translate(text=name)
     await session.execute(text('CREATE EXTENSION IF NOT EXISTS pg_trgm'))
     await session.execute(text('SELECT set_limit(0.1)'))
 
-    query = select(names.c.name).where(func.lower(names.c.name).bool_op('%')(func.lower(name))).order_by(
+    query = select(names.c.name).where(or_(func.lower(names.c.name).bool_op('%')(func.lower(name)), func.lower(names.c.name).bool_op('%')(func.lower(transleted_name)))).order_by(
         func.similarity(names.c.name, name).desc())
     result = await session.execute(query)
     names_from_result = [tuple(el) for el in result.all()]
