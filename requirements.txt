@@ -1,11 +1,12 @@
-fastapi==0.97.0
+deep_translator==1.11.4
+fastapi==0.99.1
+fastapi_utils==0.2.1
 pandas==1.5.0
 psycopg2_binary==2.9.6
 pyaspeller==1.1.0
+pydantic==1.10.2
 python-dotenv==1.0.0
 SQLAlchemy==1.4.48
 starlette
 uvicorn==0.22.0
 yadisk==1.3.3
-asyncpg
-fastapi-utils
