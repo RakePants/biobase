@@ -78,7 +78,7 @@ function search() {
   scrollTable.style.display = 'block';
   var message = document.getElementById('message');
   message.style.display = 'none';
-  
+  var checkUserChange = document.querySelector('.checkUserChange');
   var rowscount = document.querySelector('.rows_count');
   // Получение значения для фильтрации
   var searchInput = document.getElementById('search');
@@ -116,14 +116,32 @@ function search() {
         scrollTable.style.display = 'none';
         rowscount.style.display = 'none';
       } else {
-          
-          rowscount.textContent = 'Количество записей: ' + data.text.length;
-          rowscount.style.display = 'block';
+        let count = 0;        
         // Создание новых строк таблицы
         data.text.forEach(rowData => {
-          const cellData = rowData[0];
-          createTableRow(cellData);
+          if(checkUserChange.checked){
+            if(rowData[1] === false){
+              createTableRow(rowData);
+              count = count + 1;
+            }
+          }
+          else{
+            createTableRow(rowData);
+            count = count + 1;
+          }
+          
           });
+          if(count != 0){
+            rowscount.textContent = 'Количество записей: ' + count;
+            rowscount.style.display = 'block';
+          }
+          else{
+            message.textContent = "Ничего не найдено ¯\\_(ツ)_/¯";
+            message.style.display = 'block';
+            scrollTable.style.display = 'none';
+            rowscount.style.display = 'none';
+          }
+          
       }
       loader.style.display = 'none';
     })
@@ -249,7 +267,8 @@ function delay(callback, delayTime) {
 }
 
 // Функция создания строки с данными
-function createTableRow(cellData) {
+function createTableRow(Data) {
+  var cellData = Data[0];
   var table = document.getElementById('data');
   var newRow = document.createElement('tr');
   var cell = document.createElement('td');
@@ -268,7 +287,12 @@ function createTableRow(cellData) {
   cell.appendChild(div);
   cell.appendChild(button);
   cell.appendChild(check);
-
+  if(Data[1] === false){
+    var userChangeMassege = document.createElement('div');
+    userChangeMassege.classList.add('changeMessage');
+    userChangeMassege.textContent = 'Этот элемент добавлен пользователем';
+    cell.appendChild(userChangeMassege);
+  }
   newRow.appendChild(cell);
   table.querySelector('tbody').appendChild(newRow);
 
