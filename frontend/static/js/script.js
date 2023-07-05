@@ -121,10 +121,9 @@ function search() {
           rowscount.style.display = 'block';
         // Создание новых строк таблицы
         data.text.forEach(rowData => {
-          rowData.forEach(cellData => {
-            createTableRow(cellData); // Создание строки с данными
+          const cellData = rowData[0];
+          createTableRow(cellData);
           });
-        });
       }
       loader.style.display = 'none';
     })
